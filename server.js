@@ -48,7 +48,22 @@ server.listen(port, 'localhost', function () {
     console.log(`Server listening on localhost:${port}`);
 });
 
+function createFileWithStream(fileName, newFileName, transformStream) {
+    fs.stat(fileName, (err) => {
+        if (!err) {
+            const rd = fs.createReadStream(fileName);
+            const ws = fs.createWriteStream(newFileName);
+            if (transformStream) {
+                rd.pipe(transformStream).pipe(ws);
+            } else {
+                rd.pipe(ws);
+            }
 
+        } else {
+            console.error("stat error " + err);
+        }
+    });
+}
 
 function getUniqId() {
     return Date.now() + seed++;
